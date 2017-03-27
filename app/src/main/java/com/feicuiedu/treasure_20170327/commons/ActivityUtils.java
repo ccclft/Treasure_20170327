@@ -15,7 +15,7 @@ import android.widget.Toast;
 import java.lang.ref.WeakReference;
 
 /**
- * Activity相关工具类：：弹吐司，跳转页面，隐藏软键盘等。
+ * Activity相关工具类：弹吐司，跳转页面，隐藏软键盘等。
  */
 public class ActivityUtils {
     // 弱引用

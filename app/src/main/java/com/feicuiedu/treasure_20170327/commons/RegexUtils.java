@@ -68,5 +68,4 @@ public class RegexUtils {
         string = string.replaceAll("[^\\x00-\\xff]", "**");
         return string.length();
     }
-
 }
