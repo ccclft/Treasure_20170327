@@ -1,13 +1,21 @@
 package com.feicuiedu.treasure_20170327;
 
+import android.content.res.AssetFileDescriptor;
 import android.graphics.SurfaceTexture;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.feicuiedu.treasure_20170327.commons.ActivityUtils;
+
+import java.io.FileDescriptor;
+import java.io.IOException;
 
 /**
  * Created by gqq on 2017/3/27.
@@ -17,6 +25,8 @@ import android.view.ViewGroup;
 public class MainMP4Fragment extends Fragment implements TextureView.SurfaceTextureListener {
 
     private TextureView mTextureView;
+    private ActivityUtils mActivityUtils;
+    private MediaPlayer mMediaPlayer;
 
     /**
      * 视频播放：
@@ -28,6 +38,8 @@ public class MainMP4Fragment extends Fragment implements TextureView.SurfaceText
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        mActivityUtils = new ActivityUtils(this);
 
         // Fragment全屏显示播放视频的控件
         mTextureView = new TextureView(getContext());
@@ -46,7 +58,7 @@ public class MainMP4Fragment extends Fragment implements TextureView.SurfaceText
 
     // 确实准备好了，可以进行视频播放的展示了
     @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+    public void onSurfaceTextureAvailable(final SurfaceTexture surface, int width, int height) {
 
         /**
          * 视频展示的控件已经准备好了，可以播放视频了
@@ -56,6 +68,38 @@ public class MainMP4Fragment extends Fragment implements TextureView.SurfaceText
          */
 
 
+        try {
+            // 打开播放的资源文件
+            AssetFileDescriptor openFd = getContext().getAssets().openFd("welcome.mp4");
+
+            // 拿到MediaPlayer需要的资源类型
+            FileDescriptor fileDescriptor = openFd.getFileDescriptor();
+
+            mMediaPlayer = new MediaPlayer();
+
+            // 设置播放的资源给MediaPlayer
+            mMediaPlayer.setDataSource(fileDescriptor,openFd.getStartOffset(),openFd.getLength());
+
+            // 异步准备
+            mMediaPlayer.prepareAsync();
+
+            // 设置准备的监听：看一下有没有准备好，可不可以播放
+            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+                // 准备好了，视频可以播放了
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+
+                    Surface mySurface = new Surface(surface);
+                    mMediaPlayer.setSurface(mySurface);
+                    mMediaPlayer.setLooping(true);// 循环播放
+                    mMediaPlayer.start();// 开始播放
+                }
+            });
+
+        } catch (IOException e) {
+            mActivityUtils.showToast("媒体文件播放失败了");
+        }
 
     }
 
@@ -75,5 +119,15 @@ public class MainMP4Fragment extends Fragment implements TextureView.SurfaceText
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mMediaPlayer!=null){
+            // 释放资源
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
     }
 }
