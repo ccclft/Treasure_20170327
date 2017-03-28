@@ -1,14 +1,20 @@
 package com.feicuiedu.treasure_20170327.user.login;
 
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.feicuiedu.treasure_20170327.R;
+import com.feicuiedu.treasure_20170327.commons.RegexUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,6 +31,8 @@ public class LoginActivity extends AppCompatActivity {
     EditText mEtPassword;
     @BindView(R.id.btn_Login)
     Button mBtnLogin;
+    private String mUserName;
+    private String mPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +57,39 @@ public class LoginActivity extends AppCompatActivity {
             // 设置标题
             getSupportActionBar().setTitle(R.string.login);
         }
+
+        // 设置文本变化的监听
+        mEtUsername.addTextChangedListener(mTextWatcher);
+        mEtPassword.addTextChangedListener(mTextWatcher);
+
     }
+
+    // 文本变化的监听
+    private TextWatcher mTextWatcher = new TextWatcher() {
+
+        // 文本变化前
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        // 文本变化中
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        // 文本变化后
+        @Override
+        public void afterTextChanged(Editable s) {
+            mUserName = mEtUsername.getText().toString();
+            mPassword = mEtPassword.getText().toString();
+
+            // 判断用户名和密码都不为空，按钮才可以点击
+            boolean canLogin = !(TextUtils.isEmpty(mUserName)||TextUtils.isEmpty(mPassword));
+            mBtnLogin.setEnabled(canLogin);
+        }
+    };
 
     // 重写选项菜单的选中监听
     @Override
@@ -68,5 +108,21 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_Login)
     public void onClick() {
+
+        // 账号不符合规则
+        if (RegexUtils.verifyUsername(mUserName)!=RegexUtils.VERIFY_SUCCESS){
+
+            // TODO 弹个对话框提示
+            return;
+
+        }
+
+        // 密码不符合规范
+        if (RegexUtils.verifyPassword(mPassword)!=RegexUtils.VERIFY_SUCCESS){
+            // TODO: 2017/3/28 弹个对话框
+            return;
+        }
+
+        // TODO 要去做登录的业务逻辑
     }
 }
