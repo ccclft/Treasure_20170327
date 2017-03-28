@@ -70,7 +70,6 @@ public class LoginPresenter {
                 mLoginView.hideProgress();
                 mLoginView.showMessage("登录成功");
                 mLoginView.navigateToHome();
-
             }
         }.execute();
     }

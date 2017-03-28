@@ -146,6 +146,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView{
         new LoginPresenter(this).login();
     }
 
+
     //----------------------登录的业务过程中涉及的视图处理------------------------
     // 跳转页面
     @Override
