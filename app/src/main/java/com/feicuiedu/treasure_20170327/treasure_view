@@ -17,4 +17,25 @@ MVP
 2. 登录和注册模拟场景进行
 3. MVP项目架构方式
 
+MVC：
+Model：数据：网络请求得到的数据、数据库读取的数据、本地的数据等
+View：布局（视图）
+Controller：Activity、Fragment等
+
+能不能将视图和业务分离？视图和业务模块独立
+
+MVP：
+Model：数据：网络请求得到的数据、数据库读取的数据、本地的数据等
+View：视图、用户界面：Activity、Fragment、自定义的视图
+Presenter：交互中间人，View通知P来进行数据的获取，拿到数据之后
+    要把数据给View，数据和视图沟通的桥梁。
+
+使用：
+Model：数据
+View：视图
+Presenter：业务类
+View Interface：视图接口，主要是为了处理业务过程中涉及到的视图的操作
+    Activity实现这个视图接口，实现具体的视图方法
+
+
 

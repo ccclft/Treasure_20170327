@@ -29,7 +29,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 // 登录页面
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements LoginView{
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -143,53 +143,13 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         // 要去做登录的业务逻辑,模拟用户登录的场景，异步任务来模拟
-        /**
-         * 1. 参数：请求的地址、上传的数据等类型，可以为空Void
-         * 2. 进度：一般是Integer(int的包装类)，可以为空Void
-         * 3. 结果：比如String、可以为空Void
-         */
-        new AsyncTask<Void,Integer,Void>(){
-
-            // 请求之前的视图处理：比如进度条的显示
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-
-                // 显示一个进度条
-                showProgress();
-            }
-
-            // 后台线程：耗时的操作
-            @Override
-            protected Void doInBackground(Void... params) {
-
-                // 模拟：休眠3秒钟
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                return null;
-            }
-
-            // 拿到请求的数据，处理UI：进度条隐藏、跳转页面等
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-
-                // 隐藏进度条
-                hideProgress();
-                showMessage("登录成功");
-                navigateToHome();
-
-            }
-        }.execute();
+        new LoginPresenter(this).login();
     }
 
     //----------------------登录的业务过程中涉及的视图处理------------------------
     // 跳转页面
-    private void navigateToHome() {
+    @Override
+    public void navigateToHome() {
         mActivityUtils.startActivity(HomeActivity.class);
         finish();
 
@@ -199,19 +159,22 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // 显示信息
-    private void showMessage(String message) {
+    @Override
+    public void showMessage(String message) {
         mActivityUtils.showToast(message);
     }
 
     // 隐藏进度条
-    private void hideProgress() {
+    @Override
+    public void hideProgress() {
         if (mProgressDialog!=null){
             mProgressDialog.dismiss();
         }
     }
 
     // 进度条的显示
-    private void showProgress() {
+    @Override
+    public void showProgress() {
         mProgressDialog = ProgressDialog.show(this, "登录", "正在登录中，请稍后~");
     }
 }
