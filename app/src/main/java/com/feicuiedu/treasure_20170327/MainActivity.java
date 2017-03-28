@@ -1,5 +1,9 @@
 package com.feicuiedu.treasure_20170327;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,8 +19,18 @@ import butterknife.Unbinder;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String MAIN_ACTION = "navigate_to_main";
     private ActivityUtils mActivityUtils;
     private Unbinder mUnbinder;
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+        // 接收到广播之后处理
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            finish();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +38,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mActivityUtils = new ActivityUtils(this);
         mUnbinder = ButterKnife.bind(this);
+
+        // 注册本地广播
+        IntentFilter fliter = new IntentFilter(MAIN_ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,fliter);
 
     }
 
