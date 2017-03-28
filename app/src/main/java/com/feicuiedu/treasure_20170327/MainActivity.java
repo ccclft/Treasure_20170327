@@ -1,6 +1,7 @@
 package com.feicuiedu.treasure_20170327;
 
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mActivityUtils = new ActivityUtils(this);
         mUnbinder = ButterKnife.bind(this);
+
     }
 
     @OnClick({R.id.btn_Register, R.id.btn_Login})

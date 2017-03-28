@@ -15,6 +15,7 @@ import android.widget.EditText;
 
 import com.feicuiedu.treasure_20170327.R;
 import com.feicuiedu.treasure_20170327.commons.RegexUtils;
+import com.feicuiedu.treasure_20170327.custom.AlertDialogFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         // toolbar
         // Toolbar作为ActionBar展示
         setSupportActionBar(mToolbar);
-        if (getSupportActionBar()!= null){
+        if (getSupportActionBar() != null) {
 
             // 设置返回的箭头,内部是选项菜单来处理的，而且Android内部已经给他设置好了id
             // android.R.id.home
@@ -86,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
             mPassword = mEtPassword.getText().toString();
 
             // 判断用户名和密码都不为空，按钮才可以点击
-            boolean canLogin = !(TextUtils.isEmpty(mUserName)||TextUtils.isEmpty(mPassword));
+            boolean canLogin = !(TextUtils.isEmpty(mUserName) || TextUtils.isEmpty(mPassword));
             mBtnLogin.setEnabled(canLogin);
         }
     };
@@ -95,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
 
             // 处理ActionBar上面的返回箭头的事件
             case android.R.id.home:
@@ -110,19 +111,27 @@ public class LoginActivity extends AppCompatActivity {
     public void onClick() {
 
         // 账号不符合规则
-        if (RegexUtils.verifyUsername(mUserName)!=RegexUtils.VERIFY_SUCCESS){
+        if (RegexUtils.verifyUsername(mUserName) != RegexUtils.VERIFY_SUCCESS) {
 
-            // TODO 弹个对话框提示
+            // 弹个对话框提示
+            AlertDialogFragment.getInstances(getString(R.string.username_error),
+                    getString(R.string.username_rules))
+                    .show(getSupportFragmentManager(),"usernameError");
             return;
 
         }
 
         // 密码不符合规范
-        if (RegexUtils.verifyPassword(mPassword)!=RegexUtils.VERIFY_SUCCESS){
-            // TODO: 2017/3/28 弹个对话框
+        if (RegexUtils.verifyPassword(mPassword) != RegexUtils.VERIFY_SUCCESS) {
+            // 弹个对话框
+
+            AlertDialogFragment.getInstances(getString(R.string.password_error),
+                    getString(R.string.password_rules))
+                    .show(getSupportFragmentManager(),"passwordError");
             return;
         }
 
-        // TODO 要去做登录的业务逻辑
+        // 要去做登录的业务逻辑,模拟用户登录的场景，异步任务来模拟
+
     }
 }
