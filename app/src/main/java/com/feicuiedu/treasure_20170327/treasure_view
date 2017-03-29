@@ -69,6 +69,12 @@ View Interface：视图接口，主要是为了处理业务过程中涉及到的
 
 OkHttp进行网络请求：
 1. 添加依赖
+2. 构建了Get请求
+3. OkHttpClient进行单例化
+4. Call: 请求和响应做管理。
+    构建：okHttpClient.newCall(request);
+    执行：execute(),enqueue();
+    取消: call.cancel(), 是可以在任意的线程取消的
 
 
 

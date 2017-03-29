@@ -3,6 +3,8 @@ package com.feicuiedu.treasure_20170327.user.login;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.feicuiedu.treasure_20170327.net.NetClient;
+
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -33,6 +35,7 @@ public class LoginPresenter {
      */
 
     private LoginView mLoginView;
+    private Call mCall;
 
     public LoginPresenter(LoginView loginView) {
         mLoginView = loginView;
@@ -41,20 +44,10 @@ public class LoginPresenter {
     // 登录的业务
     public void login() {
 
-        // 1. 创建一个客户端
-        OkHttpClient okHttpClient = new OkHttpClient();
+        mCall.cancel();// Call模型的取消
 
-        // 2. 构建请求
-        final Request request = new Request.Builder()
-                .get()// 请求的方式
-                .url("http://www.baidu.com")// 请求的地址
-                .addHeader("content-type","html")// 添加请求头信息
-                .addHeader("context-length","1024")
-                // Get请求不需要添加请求体
-                .build();
-
-        // 3. 发送请求：同步和异步，我们采用异步的方式
-        okHttpClient.newCall(request).enqueue(new Callback() {
+        mCall = NetClient.getInstance().getData();
+        mCall.enqueue(new Callback() {
 
             // onFailure 请求失败的时候会触发
             @Override
@@ -141,4 +134,6 @@ public class LoginPresenter {
 //            }
 //        }.execute();
     }
+
+
 }
