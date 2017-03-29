@@ -1,6 +1,8 @@
 package com.feicuiedu.treasure_20170327.user.login;
 
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.feicuiedu.treasure_20170327.net.NetClient;
@@ -19,6 +21,8 @@ import okhttp3.Response;
 
 // 登录的业务类：帮View去做业务请求
 public class LoginPresenter {
+
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     /**
      * 业务类中间涉及到的视图怎么处理？
@@ -53,6 +57,15 @@ public class LoginPresenter {
             @Override
             public void onFailure(Call call, IOException e) {
                 // 都是后台线程：不能做UI的操作
+
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 更新UI
+
+                    }
+                });
+
                 Log.i("okhttp","onFailure");
             }
 

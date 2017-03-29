@@ -84,6 +84,19 @@ OkHttp进行网络请求：
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
   2. 设置给OkHttpClient
 
+总结：
+1. http基本的知识：
+    了解消息的结构
+2. OkHttp的使用
+    使用的流程、优化
+    Call模型的概念
+    拦截器：日志拦截器
+任务：OkHttp的知识
+明天：
+Post请求
+Retrofit
+
+
 
 
 

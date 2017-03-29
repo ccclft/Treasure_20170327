@@ -1,7 +1,6 @@
 package com.feicuiedu.treasure_20170327.net;
 
 import okhttp3.Call;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
