@@ -1,8 +1,10 @@
 package com.feicuiedu.treasure_20170327.net;
 
 import okhttp3.Call;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * Created by gqq on 2017/3/29.
@@ -16,8 +18,15 @@ public class NetClient {
 
     private NetClient() {
 
+        // 日志拦截器
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        // 需要设置打印级别
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
         // OkHttpClient的单例化
-        mOkHttpClient = new OkHttpClient();
+        mOkHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .build();
     }
 
     public static synchronized NetClient getInstance(){

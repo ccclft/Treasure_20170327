@@ -44,7 +44,7 @@ public class LoginPresenter {
     // 登录的业务
     public void login() {
 
-        mCall.cancel();// Call模型的取消
+//        mCall.cancel();// Call模型的取消
 
         mCall = NetClient.getInstance().getData();
         mCall.enqueue(new Callback() {
