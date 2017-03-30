@@ -15,6 +15,6 @@ public interface TreasureApi {
 
     // 构建请求
     @GET("http://www.baidu.com")
-    @Headers({"content-type:html","context-length:1024"})
+    @Headers({"context-length:1024"})
     Call<ResponseBody> getData();
 }

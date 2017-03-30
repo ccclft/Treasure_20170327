@@ -8,17 +8,10 @@ import android.widget.Toast;
 
 import com.feicuiedu.treasure_20170327.net.NetClient;
 import com.feicuiedu.treasure_20170327.user.User;
-import com.feicuiedu.treasure_20170327.user.UserResult;
-import com.google.gson.Gson;
-
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by gqq on 2017/3/28.
@@ -53,47 +46,20 @@ public class LoginPresenter {
     // 登录的业务
     public void login(User user) {
 
-        NetClient.getInstance().login(user).enqueue(new Callback() {
+        NetClient.getInstance().getTreasureApi().getData().enqueue(new Callback<ResponseBody>() {
 
+            // 请求成功
             @Override
-            public void onFailure(Call call, IOException e) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mLoginView.showMessage("请求失败");
-                    }
-                });
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                // 可以更新UI的
+                mLoginView.showMessage("请求成功："+response.code());
             }
 
+            // 请求失败
             @Override
-            public void onResponse(Call call, final Response response) throws IOException {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        if (response.isSuccessful()){
-                            ResponseBody responseBody = response.body();
-                            try {
-                                String json = responseBody.string();
-
-                                UserResult userResult = new Gson().fromJson(json, UserResult.class);
-
-                                if (userResult==null){
-                                    mLoginView.showMessage("未知的错误");
-                                    return;
-                                }
-
-                                if (userResult.getCode()==1){
-                                    mLoginView.navigateToHome();
-                                }
-                                mLoginView.showMessage(userResult.getMsg());
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                });
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // 可以更新UI的
+                mLoginView.showMessage("请求失败");
             }
         });
     }
