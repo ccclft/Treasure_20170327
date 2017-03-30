@@ -10,6 +10,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
 
 /**
  * Created by gqq on 2017/3/29.
@@ -22,6 +23,8 @@ public class NetClient {
     private static NetClient mNetClient;
     private final OkHttpClient mOkHttpClient;
     private final Gson mGson;
+    private final Retrofit mRetrofit;
+    private TreasureApi mTreasureApi;
 
     private NetClient() {
 
@@ -36,6 +39,14 @@ public class NetClient {
         mOkHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
                 .build();
+
+        // Retrofit的创建
+        // 必须要加的BASEURL
+        // 添加OkHttpClient
+        mRetrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)// 必须要加的BASEURL
+                .client(mOkHttpClient)// 添加OkHttpClient
+                .build();
     }
 
     public static synchronized NetClient getInstance(){
@@ -45,56 +56,13 @@ public class NetClient {
         return mNetClient;
     }
 
-    // 将每一个请求都单独的放置到一个方法里面
-    public Call getData(){
-        // 构建请求
-        final Request request = new Request.Builder()
-                .get()// 请求的方式
-                .url("http://www.baidu.com")// 请求的地址
-                .addHeader("content-type","html")// 添加请求头信息
-                .addHeader("context-length","1024")
-                // Get请求不需要添加请求体
-                .build();
+    // 将TreasureApi怎么对外提供处理：提供一个方法getTreasureApi()
+    public TreasureApi getTreasureApi(){
 
-        // 根据请求进行建模Call
-        return mOkHttpClient.newCall(request);
-    }
-
-    // 构建POST请求
-    public Call login(User user){
-
-        /**
-         * 1. 当需要上传的数据是键值对的形式的时候
-         *  username = “”；
-         *  password = “”；
-         *  json = “{username=“”，password = “”}”
-         *  一般以表单的形式进行提交
-         *
-         * 2. 当上传的数据是多个部分的时候
-         *  多部分提交
-         */
-        // 表单形式请求体的构建
-//        RequestBody formBody = new FormBody.Builder()
-//                .add("username","123456")
-//                .add("password","123456")
-//                .build();
-//
-//        // 多部分请求体的构建
-//        RequestBody multBody = new MultipartBody.Builder()
-//                .addFormDataPart("photo","abc.png",RequestBody.create(null,"abc.png"))
-//                .addFormDataPart("name","123456")
-//                .build();
-
-
-        // 需要上传的请求体:字符串、文件、数组等
-        RequestBody requestBody = RequestBody.create(null,mGson.toJson(user));
-
-        // 构建的请求
-        Request request = new Request.Builder()
-                .post(requestBody)
-                .url(BASE_URL+"/Handler/UserHandler.ashx?action=login")
-                .build();
-
-        return mOkHttpClient.newCall(request);
+        if (mTreasureApi==null){
+            // 对请求接口的具体实现
+            mTreasureApi = mRetrofit.create(TreasureApi.class);
+        }
+        return mTreasureApi;
     }
 }

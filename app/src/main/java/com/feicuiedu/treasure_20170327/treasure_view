@@ -102,9 +102,15 @@ Retrofit网络框架的讲解。
 
 Retrofit
 1. 添加依赖
-
-
-
+    compile 'com.squareup.retrofit2:retrofit:2.2.0'
+2. 创建和使用
+    1. 创建Retrofit
+        mRetrofit = new Retrofit.Builder()
+                        .baseUrl(BASE_URL)// 必须要加的BASEURL
+                        .client(mOkHttpClient)// 添加OkHttpClient
+                        .build();
+    2. 构建请求：创建一个接口，方便对应服务器接口，最后通过Retrofit的create实现
+    3. 请求接口实现：mRetrofit.create(TreasureApi.class);
 
 
 
