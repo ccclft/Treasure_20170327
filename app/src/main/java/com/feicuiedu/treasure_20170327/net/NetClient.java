@@ -1,8 +1,11 @@
 package com.feicuiedu.treasure_20170327.net;
 
 import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
@@ -12,6 +15,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 // 网络的客户端类
 public class NetClient {
 
+    private static final String BASE_URL = "http://admin.syfeicuiedu.com";
     private static NetClient mNetClient;
     private final OkHttpClient mOkHttpClient;
 
@@ -36,7 +40,6 @@ public class NetClient {
     }
 
     // 将每一个请求都单独的放置到一个方法里面
-
     public Call getData(){
         // 构建请求
         final Request request = new Request.Builder()
@@ -51,4 +54,43 @@ public class NetClient {
         return mOkHttpClient.newCall(request);
     }
 
+    // 构建POST请求
+    public Call login(){
+
+        /**
+         * 1. 当需要上传的数据是键值对的形式的时候
+         *  username = “”；
+         *  password = “”；
+         *  json = “{username=“”，password = “”}”
+         *  一般以表单的形式进行提交
+         *
+         * 2. 当上传的数据是多个部分的时候
+         *  多部分提交
+         */
+        // 表单形式请求体的构建
+//        RequestBody formBody = new FormBody.Builder()
+//                .add("username","123456")
+//                .add("password","123456")
+//                .build();
+//
+//        // 多部分请求体的构建
+//        RequestBody multBody = new MultipartBody.Builder()
+//                .addFormDataPart("photo","abc.png",RequestBody.create(null,"abc.png"))
+//                .addFormDataPart("name","123456")
+//                .build();
+
+        // 需要上传的请求体:字符串、文件、数组等
+        RequestBody requestBody = RequestBody.create(null,"{\n" +
+                "\"UserName\":\"qjd\",\n" +
+                "\"Password\":\"654321\"\n" +
+                "}");
+
+        // 构建的请求
+        Request request = new Request.Builder()
+                .post(requestBody)
+                .url(BASE_URL+"/Handler/UserHandler.ashx?action=login")
+                .build();
+
+        return mOkHttpClient.newCall(request);
+    }
 }
