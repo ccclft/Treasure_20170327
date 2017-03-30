@@ -1,5 +1,8 @@
 package com.feicuiedu.treasure_20170327.net;
 
+import com.feicuiedu.treasure_20170327.user.User;
+import com.google.gson.Gson;
+
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.MultipartBody;
@@ -18,8 +21,11 @@ public class NetClient {
     private static final String BASE_URL = "http://admin.syfeicuiedu.com";
     private static NetClient mNetClient;
     private final OkHttpClient mOkHttpClient;
+    private final Gson mGson;
 
     private NetClient() {
+
+        mGson = new Gson();
 
         // 日志拦截器
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -55,7 +61,7 @@ public class NetClient {
     }
 
     // 构建POST请求
-    public Call login(){
+    public Call login(User user){
 
         /**
          * 1. 当需要上传的数据是键值对的形式的时候
@@ -79,11 +85,9 @@ public class NetClient {
 //                .addFormDataPart("name","123456")
 //                .build();
 
+
         // 需要上传的请求体:字符串、文件、数组等
-        RequestBody requestBody = RequestBody.create(null,"{\n" +
-                "\"UserName\":\"qjd\",\n" +
-                "\"Password\":\"654321\"\n" +
-                "}");
+        RequestBody requestBody = RequestBody.create(null,mGson.toJson(user));
 
         // 构建的请求
         Request request = new Request.Builder()

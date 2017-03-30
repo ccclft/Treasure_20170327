@@ -7,6 +7,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.feicuiedu.treasure_20170327.net.NetClient;
+import com.feicuiedu.treasure_20170327.user.User;
+import com.feicuiedu.treasure_20170327.user.UserResult;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 
@@ -48,9 +51,9 @@ public class LoginPresenter {
     }
 
     // 登录的业务
-    public void login() {
+    public void login(User user) {
 
-        NetClient.getInstance().login().enqueue(new Callback() {
+        NetClient.getInstance().login(user).enqueue(new Callback() {
 
             @Override
             public void onFailure(Call call, IOException e) {
@@ -73,13 +76,21 @@ public class LoginPresenter {
                             try {
                                 String json = responseBody.string();
 
-                                // GSON解析
-                                mLoginView.showMessage("请求成功"+response.code());
+                                UserResult userResult = new Gson().fromJson(json, UserResult.class);
+
+                                if (userResult==null){
+                                    mLoginView.showMessage("未知的错误");
+                                    return;
+                                }
+
+                                if (userResult.getCode()==1){
+                                    mLoginView.navigateToHome();
+                                }
+                                mLoginView.showMessage(userResult.getMsg());
 
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-
                         }
                     }
                 });

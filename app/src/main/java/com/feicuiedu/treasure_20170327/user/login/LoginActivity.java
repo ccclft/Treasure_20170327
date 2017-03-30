@@ -23,6 +23,7 @@ import com.feicuiedu.treasure_20170327.commons.ActivityUtils;
 import com.feicuiedu.treasure_20170327.commons.RegexUtils;
 import com.feicuiedu.treasure_20170327.custom.AlertDialogFragment;
 import com.feicuiedu.treasure_20170327.treasure.HomeActivity;
+import com.feicuiedu.treasure_20170327.user.User;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -143,7 +144,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView{
         }
 
         // 要去做登录的业务逻辑,模拟用户登录的场景，异步任务来模拟
-        new LoginPresenter(this).login();
+        new LoginPresenter(this).login(new User(mUserName,mPassword));
     }
 
 
