@@ -8,6 +8,10 @@ import android.widget.Toast;
 
 import com.feicuiedu.treasure_20170327.net.NetClient;
 import com.feicuiedu.treasure_20170327.user.User;
+import com.feicuiedu.treasure_20170327.user.UserResult;
+import com.google.gson.Gson;
+
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,22 +48,35 @@ public class LoginPresenter {
     }
 
     // 登录的业务
-    public void login(User user) {
+    public void login(final User user) {
 
-        NetClient.getInstance().getTreasureApi().getData().enqueue(new Callback<ResponseBody>() {
+        mLoginView.showProgress();
 
-            // 请求成功
+        NetClient.getInstance().getTreasureApi().login(user).enqueue(new Callback<UserResult>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                // 可以更新UI的
-                mLoginView.showMessage("请求成功："+response.code());
+            public void onResponse(Call<UserResult> call, Response<UserResult> response) {
+
+                mLoginView.hideProgress();
+
+                // 成功
+                if (response.isSuccessful()){
+                    UserResult userResult = response.body();
+                    if (userResult==null){
+                        mLoginView.showMessage("未知的错误");
+                        return;
+                    }
+                    if (userResult.getCode()==1){
+                        // 真正的成功了
+                        mLoginView.navigateToHome();
+                    }
+                    mLoginView.showMessage(userResult.getMsg());
+                }
             }
 
-            // 请求失败
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                // 可以更新UI的
-                mLoginView.showMessage("请求失败");
+            public void onFailure(Call<UserResult> call, Throwable t) {
+                mLoginView.hideProgress();
+                mLoginView.showMessage("请求失败"+t.getMessage());
             }
         });
     }

@@ -11,6 +11,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by gqq on 2017/3/29.
@@ -46,6 +47,8 @@ public class NetClient {
         mRetrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)// 必须要加的BASEURL
                 .client(mOkHttpClient)// 添加OkHttpClient
+                // 添加转换器
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
 

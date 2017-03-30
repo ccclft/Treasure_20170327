@@ -1,9 +1,13 @@
 package com.feicuiedu.treasure_20170327.net;
 
+import com.feicuiedu.treasure_20170327.user.User;
+import com.feicuiedu.treasure_20170327.user.UserResult;
+
 import java.io.File;
 import java.util.Map;
 
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -31,6 +35,11 @@ public interface TreasureApi {
     @POST("http://www.baidu.com")
     @Headers({"context-length:1024"})
     Call<ResponseBody> getData();
+
+
+    // 登录的请求
+    @POST("/Handler/UserHandler.ashx?action=login")
+    Call<UserResult> login(@Body User user);
 
     /**
      * 注解：

@@ -112,6 +112,23 @@ Retrofit
     2. 构建请求：创建一个接口，方便对应服务器接口，最后通过Retrofit的create实现
     3. 请求接口实现：mRetrofit.create(TreasureApi.class);
 
+3. 转换器：
+    GSON转换器：Json--实体类之间进行自动的转换
+    1. 添加依赖：
+    2. 给Retrofit设置
+    3. 替换需要转换的内容：请求体和响应体
+
+总结：
+Retrofit
+
+任务：
+流程、注解多多理解、转换器
+登录实现
+
+明天：
+其他的请求
+Home页面的搭建：侧滑和侧滑菜单
+
 
 
 
