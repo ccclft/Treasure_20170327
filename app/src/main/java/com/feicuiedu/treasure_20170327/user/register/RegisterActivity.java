@@ -19,6 +19,7 @@ import com.feicuiedu.treasure_20170327.commons.ActivityUtils;
 import com.feicuiedu.treasure_20170327.commons.RegexUtils;
 import com.feicuiedu.treasure_20170327.custom.AlertDialogFragment;
 import com.feicuiedu.treasure_20170327.treasure.HomeActivity;
+import com.feicuiedu.treasure_20170327.user.User;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -136,7 +137,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView{
         }
 
         // 进行注册的业务
-        new RegisterPresenter(this).register();
+        new RegisterPresenter(this).register(new User(mUserName,mPassword));
     }
 
     //---------------------------注册过程中涉及到的视图--------------------------

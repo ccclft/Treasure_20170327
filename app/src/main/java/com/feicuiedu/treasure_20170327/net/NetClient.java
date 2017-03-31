@@ -20,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 // 网络的客户端类
 public class NetClient {
 
-    private static final String BASE_URL = "http://admin.syfeicuiedu.com";
+    public static final String BASE_URL = "http://admin.syfeicuiedu.com";
     private static NetClient mNetClient;
     private final OkHttpClient mOkHttpClient;
     private final Gson mGson;

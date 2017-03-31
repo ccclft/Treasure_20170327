@@ -4,10 +4,9 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.feicuiedu.treasure_20170327.net.NetClient;
-import com.feicuiedu.treasure_20170327.user.MultUser;
 import com.feicuiedu.treasure_20170327.user.User;
+import com.feicuiedu.treasure_20170327.user.UserPrefs;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,63 +44,36 @@ public class LoginPresenter {
     // 登录的业务
     public void login(final User user) {
 
-//        mLoginView.showProgress();
-//
-//        NetClient.getInstance().getTreasureApi().login(user).enqueue(new Callback<LoginResult>() {
-//            @Override
-//            public void onResponse(Call<LoginResult> call, Response<LoginResult> response) {
-//
-//                mLoginView.hideProgress();
-//
-//                // 成功
-//                if (response.isSuccessful()){
-//                    LoginResult userResult = response.body();
-//                    if (userResult==null){
-//                        mLoginView.showMessage("未知的错误");
-//                        return;
-//                    }
-//                    if (userResult.getCode()==1){
-//                        // 真正的成功了
-//                        mLoginView.navigateToHome();
-//                    }
-//                    mLoginView.showMessage(userResult.getMsg());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<LoginResult> call, Throwable t) {
-//                mLoginView.hideProgress();
-//                mLoginView.showMessage("请求失败"+t.getMessage());
-//            }
-//        });
+        mLoginView.showProgress();
 
-//        NetClient.getInstance().getTreasureApi().getFormData("123456","123456").enqueue(new Callback<ResponseBody>() {
-//
-//            @Override
-//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                mLoginView.showMessage("请求成功："+response.code());
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                mLoginView.showMessage("请求失败："+t.getMessage());
-//            }
-//        });
-
-        MultUser user1 = new MultUser("yt59856b15cf394e7b84a7d48447d16098",
-                "xc62",
-                "555",
-                "123456",
-                "0F8EC12223174657B2E842076D54C361");
-        NetClient.getInstance().getTreasureApi().getMultData(user1).enqueue(new Callback<ResponseBody>() {
+        NetClient.getInstance().getTreasureApi().login(user).enqueue(new Callback<LoginResult>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                mLoginView.showMessage("请求成功：" + response.code());
+            public void onResponse(Call<LoginResult> call, Response<LoginResult> response) {
+
+                mLoginView.hideProgress();
+
+                // 成功
+                if (response.isSuccessful()){
+                    LoginResult userResult = response.body();
+                    if (userResult==null){
+                        mLoginView.showMessage("未知的错误");
+                        return;
+                    }
+                    if (userResult.getCode()==1){
+                        // 真正的成功了
+                        // 保存头像和tokenid
+                        UserPrefs.getInstance().setPhoto(NetClient.BASE_URL+userResult.getHeadpic());
+                        UserPrefs.getInstance().setTokenid(userResult.getTokenid());
+                        mLoginView.navigateToHome();
+                    }
+                    mLoginView.showMessage(userResult.getMsg());
+                }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                mLoginView.showMessage("请求失败" + t.getMessage());
+            public void onFailure(Call<LoginResult> call, Throwable t) {
+                mLoginView.hideProgress();
+                mLoginView.showMessage("请求失败"+t.getMessage());
             }
         });
     }
