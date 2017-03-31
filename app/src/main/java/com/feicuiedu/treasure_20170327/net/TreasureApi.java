@@ -1,5 +1,6 @@
 package com.feicuiedu.treasure_20170327.net;
 
+import com.feicuiedu.treasure_20170327.user.MultUser;
 import com.feicuiedu.treasure_20170327.user.User;
 import com.feicuiedu.treasure_20170327.user.login.LoginResult;
 
@@ -79,5 +80,18 @@ public interface TreasureApi {
     Call<ResponseBody> getMultUrl(@Part("photo")File file,
                                   @Part("name")String name,
                                   @PartMap Map<String,String> map);
+
+
+
+    // 表单：
+    @POST("http://wx.feicuiedu.com:9094/yitao/UserWeb?method=register")
+    @FormUrlEncoded
+    Call<ResponseBody> getFormData(@Field("username")String name,
+                                   @Field("password")String password);
+
+    // 多部分：
+    @POST("http://wx.feicuiedu.com:9094/yitao/UserWeb?method=update")
+    @Multipart
+    Call<ResponseBody> getMultData(@Part("user")MultUser user);
 
 }
