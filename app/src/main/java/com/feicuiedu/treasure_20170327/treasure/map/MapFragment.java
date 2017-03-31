@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.feicuiedu.treasure_20170327.R;
+
 /**
  * Created by gqq on 2017/3/31.
  */
@@ -16,6 +18,7 @@ public class MapFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_map,container);
+        return view;
     }
 }
