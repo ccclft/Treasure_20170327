@@ -137,6 +137,27 @@ Home页面的搭建：侧滑和侧滑菜单
     侧滑菜单项的选择处理
     侧滑的视图处理：头像的展示
     登录之后直接到Home
+4. Home页面实现地图相关
+5. 地图的集成和展示
+    1. 了解
+    2. cmd--keytool命令是不是可以实现
+        keytool命令是JDK的一个证书管理工具，路径在JDK安装路径bin目录下
+        解决：http://blog.csdn.net/csdnhejingzhou/article/details/50643246
+
+总结：
+1. Retrofit的使用
+2. 登录和注册实现
+3. Home页面：布局的搭建、侧滑
+4. 地图的介绍
+
+任务：
+功能处理：Home页面
+准备：了解百度地图
+      注册一个账号
+      keytool命令的问题
+      Demo的下载
+明天：百度地图的集成和使用
+
 
 
 
