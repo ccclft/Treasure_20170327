@@ -96,6 +96,7 @@ OkHttp进行网络请求：
 Post请求
 Retrofit
 
+
 20170330:
 Post请求的构建、用OkHttp完善登录的效果
 Retrofit网络框架的讲解。
@@ -120,14 +121,14 @@ Retrofit
 
 总结：
 Retrofit
-
 任务：
 流程、注解多多理解、转换器
 登录实现
-
 明天：
 其他的请求
 Home页面的搭建：侧滑和侧滑菜单
+
+
 
 
 

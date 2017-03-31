@@ -1,18 +1,11 @@
 package com.feicuiedu.treasure_20170327.user.login;
 
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.feicuiedu.treasure_20170327.net.NetClient;
 import com.feicuiedu.treasure_20170327.user.User;
-import com.feicuiedu.treasure_20170327.user.UserResult;
-import com.google.gson.Gson;
 
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -52,15 +45,15 @@ public class LoginPresenter {
 
         mLoginView.showProgress();
 
-        NetClient.getInstance().getTreasureApi().login(user).enqueue(new Callback<UserResult>() {
+        NetClient.getInstance().getTreasureApi().login(user).enqueue(new Callback<LoginResult>() {
             @Override
-            public void onResponse(Call<UserResult> call, Response<UserResult> response) {
+            public void onResponse(Call<LoginResult> call, Response<LoginResult> response) {
 
                 mLoginView.hideProgress();
 
                 // 成功
                 if (response.isSuccessful()){
-                    UserResult userResult = response.body();
+                    LoginResult userResult = response.body();
                     if (userResult==null){
                         mLoginView.showMessage("未知的错误");
                         return;
@@ -74,10 +67,11 @@ public class LoginPresenter {
             }
 
             @Override
-            public void onFailure(Call<UserResult> call, Throwable t) {
+            public void onFailure(Call<LoginResult> call, Throwable t) {
                 mLoginView.hideProgress();
                 mLoginView.showMessage("请求失败"+t.getMessage());
             }
         });
+
     }
 }

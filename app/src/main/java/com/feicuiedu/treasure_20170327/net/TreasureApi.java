@@ -1,11 +1,12 @@
 package com.feicuiedu.treasure_20170327.net;
 
 import com.feicuiedu.treasure_20170327.user.User;
-import com.feicuiedu.treasure_20170327.user.UserResult;
+import com.feicuiedu.treasure_20170327.user.login.LoginResult;
 
 import java.io.File;
 import java.util.Map;
 
+import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -39,7 +40,7 @@ public interface TreasureApi {
 
     // 登录的请求
     @POST("/Handler/UserHandler.ashx?action=login")
-    Call<UserResult> login(@Body User user);
+    Call<LoginResult> login(@Body User user);
 
     /**
      * 注解：

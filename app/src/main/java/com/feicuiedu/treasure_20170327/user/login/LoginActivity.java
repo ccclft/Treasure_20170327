@@ -2,6 +2,7 @@ package com.feicuiedu.treasure_20170327.user.login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -24,6 +25,9 @@ import com.feicuiedu.treasure_20170327.commons.RegexUtils;
 import com.feicuiedu.treasure_20170327.custom.AlertDialogFragment;
 import com.feicuiedu.treasure_20170327.treasure.HomeActivity;
 import com.feicuiedu.treasure_20170327.user.User;
+
+import java.io.File;
+import java.net.URI;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -144,6 +148,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView{
         }
 
         // 要去做登录的业务逻辑,模拟用户登录的场景，异步任务来模拟
+
         new LoginPresenter(this).login(new User(mUserName,mPassword));
     }
 

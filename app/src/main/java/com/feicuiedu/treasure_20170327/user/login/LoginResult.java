@@ -1,4 +1,4 @@
-package com.feicuiedu.treasure_20170327.user;
+package com.feicuiedu.treasure_20170327.user.login;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by gqq on 2017/3/30.
  */
 // 用户登录的响应实体类
-public class UserResult {
+public class LoginResult {
 
     /**
      * errcode : 1
