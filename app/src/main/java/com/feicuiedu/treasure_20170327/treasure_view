@@ -196,6 +196,27 @@ Home页面的搭建：侧滑和侧滑菜单
     1 内部错误，不是我们的问题
     230 key申请的有问题：SHA1值、包名是否正确。
 
+3. 集成的操作流程
+    1. 添加jar包：采用Demo给的方式
+        1. jar包和so文件都放置在libs下面(可以直接从Demo里面拿到)
+        2. build.gradle里面指明so文件的路径
+            sourceSets {
+                    main {
+                        jniLibs.srcDir 'libs'
+                    }
+                  }
+    2. 配置项目
+        1. 清单文件加入：开发者key(appKey)、权限
+        2. 布局中添加地图控件：也可以动态创建的方式
+        3. 在Application里面初始化SDK
+            SDKInitializer.initialize(getApplicationContext());
+
+    3. Key的获取
+        1. 在app下面放置debug.keystore
+        2. 声明我们使用的是本项目下面的debug.keystore文件
+        3. 获取debug.keystore文件的SHA1值
+            5D:87:28:93:2C:DC:12:D0:7C:E2:C1:EF:14:CE:A3:77:E5:CB:9A:0A
+        4. 在官网上申请appkey，拿到之后在清单文件里面加上
 
 
 

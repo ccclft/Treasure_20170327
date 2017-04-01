@@ -11,6 +11,23 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    // 声明我们使用的是本项目下面的debug.keystore
+    signingConfigs {
+        // your debug keystore
+        debug{
+            storeFile file("debug.keystore")
+        }
+    }
+
+    // 指明so文件的路径在libs下面
+    sourceSets {
+        main {
+            jniLibs.srcDir 'libs'
+        }
+    }
+
+
     buildTypes {
         release {
             minifyEnabled false
