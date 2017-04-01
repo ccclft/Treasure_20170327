@@ -158,7 +158,43 @@ Home页面的搭建：侧滑和侧滑菜单
       Demo的下载
 明天：百度地图的集成和使用
 
+20170401:
 
+1. 获取appkey：官网上申请秘钥：签名文件SHA1 + 包名
+
+    SHA1值：debug.keystore签名文件获取的
+
+    1. 使用我们电脑里面的debug.keystore:在其他电脑上运行key会验证出错
+        cd .android
+        keytool -list -v -keystore debug.keystore
+        输入口令：android，注意：他不会显示，直接输完回车就可以了
+        SHA1值
+
+    2. 自己在项目里面放置一个debug.keystore
+        debug.keystore放置在app下面，要在build.gradle里面声明
+        声明方式：signingConfigs {
+                     // your debug keystore
+                     debug{
+                         storeFile file("debug.keystore")
+                     }
+                 }
+
+        cmd
+        cd F:\BaiduMapsApiASDemo\app
+        keytool -list -v -keystore debug.keystore
+
+        AS直接查看：
+        Gradle--->app模块里面的signingReport
+
+    3. keytool命令不能使用：不是内部或外部的命令
+        keytool.exe在jdk的安装路径bin目录下
+        cd C:\Program Files\Java\jdk1.8.0_77\bin（keytool所在的路径）
+        debug的keystore要写成绝对路径。
+        keytool -list -v -keystore C:\Users\123\.android\debug.keystore
+
+2. key的验证问题：
+    1 内部错误，不是我们的问题
+    230 key申请的有问题：SHA1值、包名是否正确。
 
 
 
