@@ -218,14 +218,15 @@ Home页面的搭建：侧滑和侧滑菜单
             5D:87:28:93:2C:DC:12:D0:7C:E2:C1:EF:14:CE:A3:77:E5:CB:9A:0A
         4. 在官网上申请appkey，拿到之后在清单文件里面加上
 
-问题：
-1. 只出现网格，没有出现地图
-    1. 排除网络为题
-    2. appkey有问题：230问题（key有问题）：SHA1、包名
-2. No config chosen：openGL：
-    模拟器问题、真机测试
-3. Message警告信息：但是build Successful了，是内部的问题，不是我们项目的问题
+        问题：
+        1. 只出现网格，没有出现地图
+            1. 排除网络为题
+            2. appkey有问题：230问题（key有问题）：SHA1、包名
+        2. No config chosen：openGL：
+            模拟器问题、真机测试
+        3. Message警告信息：但是build Successful了，是内部的问题，不是我们项目的问题
 
+4. 百度地图的使用
 
 
 
