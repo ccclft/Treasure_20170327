@@ -18,6 +18,8 @@ import android.widget.TextView;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BaiduMapOptions;
 import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.feicuiedu.treasure_20170327.R;
 
@@ -25,6 +27,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by gqq on 2017/3/31.
@@ -110,5 +113,39 @@ public class MapFragment extends Fragment {
 
         // 拿到地图的操作类(设置地图的视图、地图状态变化、添加覆盖物等)
         mBaiduMap = mMapView.getMap();
+    }
+
+    // 卫星视图和普通视图的切换
+    @OnClick(R.id.tv_satellite)
+    public void switchMapType(){
+
+        // 先拿到当前的地图的类型
+        int mapType = mBaiduMap.getMapType();
+        // 切换类型
+        mapType = (mapType==BaiduMap.MAP_TYPE_NORMAL)?BaiduMap.MAP_TYPE_SATELLITE:BaiduMap.MAP_TYPE_NORMAL;
+        // 文字的变化
+        String msg = (mapType==BaiduMap.MAP_TYPE_NORMAL)?"卫星":"普通";
+        mBaiduMap.setMapType(mapType);
+        mTvSatellite.setText(msg);
+    }
+
+    @OnClick(R.id.tv_compass)
+    public void switchCompass(){
+        // 当前地图指南针有没有在显示
+        boolean enabled = mBaiduMap.getUiSettings().isCompassEnabled();
+        mBaiduMap.getUiSettings().setCompassEnabled(!enabled);
+    }
+
+    // 地图的缩放
+    @OnClick({R.id.iv_scaleDown,R.id.iv_scaleUp})
+    public void scaleMap(View view){
+        switch (view.getId()){
+            case R.id.iv_scaleUp:
+                mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomIn());
+                break;
+            case R.id.iv_scaleDown:
+                mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomOut());
+                break;
+        }
     }
 }
