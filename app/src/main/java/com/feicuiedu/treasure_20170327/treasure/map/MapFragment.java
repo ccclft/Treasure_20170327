@@ -1,8 +1,13 @@
 package com.feicuiedu.treasure_20170327.treasure.map;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,6 +47,7 @@ import butterknife.OnClick;
 // 地图和宝藏的展示
 public class MapFragment extends Fragment {
 
+    private static final int LOCATION_REQUEST_CODE = 100;
     @BindView(R.id.iv_located)
     ImageView mIvLocated;
     @BindView(R.id.btn_HideHere)
@@ -75,11 +81,24 @@ public class MapFragment extends Fragment {
     private BaiduMap mBaiduMap;
     private MapView mMapView;
     private LocationClient mLocationClient;
+    private boolean isFirst = true;
+    private LatLng mCurrentLocation;
+    private String mCurrentAddr;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container);
+
+        // 1. 检测权限有没有授权成功
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // 没有成功，需要向用户申请
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    LOCATION_REQUEST_CODE);
+        }
+
         return view;
     }
 
@@ -141,10 +160,10 @@ public class MapFragment extends Fragment {
             double longitude = bdLocation.getLongitude();
 
             // 定位的位置和地址
-            LatLng currentLocation = new LatLng(latitude,longitude);
-            String currentAddr = bdLocation.getAddrStr();
+            mCurrentLocation = new LatLng(latitude,longitude);
+            mCurrentAddr = bdLocation.getAddrStr();
 
-            Log.i("TAG","定位的位置："+currentAddr+"经纬度："+latitude+","+longitude);
+            Log.i("TAG","定位的位置："+ mCurrentAddr +"经纬度："+latitude+","+longitude);
 
             // 地图上设置定位数据
             MyLocationData locationData = new MyLocationData.Builder()
@@ -156,8 +175,12 @@ public class MapFragment extends Fragment {
 
             mBaiduMap.setMyLocationData(locationData);
 
-            // TODO 将地图移动到定位的位置
-
+            // 第一次进入将地图自动移动到定位的位置
+            if (isFirst){
+                // 自动移动到定位处
+                moveToLocation();
+                isFirst = false;
+            }
         }
     };
 
@@ -220,6 +243,40 @@ public class MapFragment extends Fragment {
                 break;
             case R.id.iv_scaleDown:
                 mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomOut());
+                break;
+        }
+    }
+
+    // 定位按钮：移动到定位的位置
+    @OnClick(R.id.tv_located)
+    public void moveToLocation(){
+        // 更新的是地图的状态
+        MapStatus mapStatus = new MapStatus.Builder()
+                .target(mCurrentLocation)// 定位的位置
+                .rotate(0)
+                .overlook(0)
+                .zoom(19)
+                .build();
+        // 更新的状态
+        MapStatusUpdate update = MapStatusUpdateFactory.newMapStatus(mapStatus);
+        // 利用地图操作类更新地图的状态
+        mBaiduMap.animateMapStatus(update);
+    }
+
+    // 处理权限的回调
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode){
+            case LOCATION_REQUEST_CODE:
+
+                // 用户授权成功了
+                if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                    // 定位了
+                    mLocationClient.requestLocation();
+                }else {
+                    // 显示个吐司、提示框
+                }
                 break;
         }
     }
