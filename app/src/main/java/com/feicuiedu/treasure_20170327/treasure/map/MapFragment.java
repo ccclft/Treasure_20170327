@@ -40,6 +40,7 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.feicuiedu.treasure_20170327.R;
 import com.feicuiedu.treasure_20170327.commons.ActivityUtils;
+import com.feicuiedu.treasure_20170327.custom.TreasureView;
 import com.feicuiedu.treasure_20170327.treasure.Area;
 import com.feicuiedu.treasure_20170327.treasure.Treasure;
 import com.feicuiedu.treasure_20170327.treasure.TreasureRepo;
@@ -88,6 +89,12 @@ public class MapFragment extends Fragment implements MapMvpView{
     FrameLayout mLayoutBottom;
     @BindView(R.id.map_frame)
     FrameLayout mMapFrame;
+    @BindView(R.id.treasureView)
+    TreasureView mTreasureView;
+    @BindView(R.id.hide_treasure)
+    RelativeLayout mHideTreasure;
+
+
     private BaiduMap mBaiduMap;
     private MapView mMapView;
     private LocationClient mLocationClient;
@@ -263,16 +270,21 @@ public class MapFragment extends Fragment implements MapMvpView{
                 // InfoWindow的点击监听
                 @Override
                 public void onInfoWindowClick() {
-                    if (mCurrentMarker!=null){
-                        mCurrentMarker.setVisible(true);
-                    }
-                    // 隐藏InfoWindow
-                    mBaiduMap.hideInfoWindow();
+                    // 切换回普通的视图
+                    changeUIMode(UI_MODE_NORMAL);
                 }
             });
 
             // 2. 地图上展示
             mBaiduMap.showInfoWindow(infoWindow);
+
+            // 宝藏的信息取出
+            int id = marker.getExtraInfo().getInt("id");
+            Treasure treasure = TreasureRepo.getInstance().getTreasure(id);
+            mTreasureView.bindTreasure(treasure);
+
+            // 切换成宝藏选中的视图
+            changeUIMode(UI_MODE_SELECT);
 
             return false;
         }
@@ -410,6 +422,60 @@ public class MapFragment extends Fragment implements MapMvpView{
         // 利用地图操作类更新地图的状态
         mBaiduMap.animateMapStatus(update);
     }
+
+    /** 视图的切换方法：根据各个控件的显示和隐藏来实现视图的切换
+     * 普通的视图
+     * 宝藏选中的视图
+     * 埋藏宝藏的视图
+     */
+    private static final int UI_MODE_NORMAL = 0;// 普通视图
+    private static final int UI_MODE_SELECT = 1;// 宝藏选中视图
+    private static final int UI_MODE_HIDE = 2;// 埋藏宝藏视图
+
+    private static int mUIMode = UI_MODE_NORMAL;// 当前的视图
+
+    public void changeUIMode(int uiMode){
+        if (mUIMode==uiMode) return;
+        mUIMode = uiMode;
+
+        switch (uiMode){
+            // 切换为普通视图
+            case UI_MODE_NORMAL:
+                if (mCurrentMarker!=null){
+                    mCurrentMarker.setVisible(true);
+                }
+                mBaiduMap.hideInfoWindow();
+                mLayoutBottom.setVisibility(View.GONE);
+                mCenterLayout.setVisibility(View.GONE);
+                break;
+            // 切换为选中视图(展示宝藏信息卡片)
+            case UI_MODE_SELECT:
+                mLayoutBottom.setVisibility(View.VISIBLE);
+                mTreasureView.setVisibility(View.VISIBLE);
+                mCenterLayout.setVisibility(View.GONE);
+                mHideTreasure.setVisibility(View.GONE);
+                break;
+
+            // 切换为埋藏宝藏
+            case UI_MODE_HIDE:
+                if (mCurrentMarker!=null){
+                    mCurrentMarker.setVisible(true);
+                }
+                mBaiduMap.hideInfoWindow();
+                mCenterLayout.setVisibility(View.VISIBLE);
+                mLayoutBottom.setVisibility(View.GONE);
+                mBtnHideHere.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mLayoutBottom.setVisibility(View.VISIBLE);
+                        mTreasureView.setVisibility(View.GONE);
+                        mHideTreasure.setVisibility(View.VISIBLE);
+                    }
+                });
+                break;
+        }
+    }
+
 
 
     // -------------------------视图的具体实现--------------------------
