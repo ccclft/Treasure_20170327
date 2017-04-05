@@ -44,6 +44,7 @@ import com.feicuiedu.treasure_20170327.custom.TreasureView;
 import com.feicuiedu.treasure_20170327.treasure.Area;
 import com.feicuiedu.treasure_20170327.treasure.Treasure;
 import com.feicuiedu.treasure_20170327.treasure.TreasureRepo;
+import com.feicuiedu.treasure_20170327.treasure.detail.TreasureDetailActivity;
 
 import java.util.List;
 import java.util.Map;
@@ -119,7 +120,6 @@ public class MapFragment extends Fragment implements MapMvpView{
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     LOCATION_REQUEST_CODE);
         }
-
         return view;
     }
 
@@ -373,6 +373,7 @@ public class MapFragment extends Fragment implements MapMvpView{
         return mCurrentLocation;
     }
 
+    // -----------------------------视图的点击事件------------------------------------
     // 卫星视图和普通视图的切换
     @OnClick(R.id.tv_satellite)
     public void switchMapType(){
@@ -387,6 +388,7 @@ public class MapFragment extends Fragment implements MapMvpView{
         mTvSatellite.setText(msg);
     }
 
+    // 指南针
     @OnClick(R.id.tv_compass)
     public void switchCompass(){
         // 当前地图指南针有没有在显示
@@ -422,6 +424,16 @@ public class MapFragment extends Fragment implements MapMvpView{
         // 利用地图操作类更新地图的状态
         mBaiduMap.animateMapStatus(update);
     }
+
+    // 宝藏信息卡片的点击事件
+    @OnClick(R.id.treasureView)
+    public void clickTreasureView(){
+        // 跳转到详情页，展示宝藏信息，将宝藏数据传递过去
+        int id = mCurrentMarker.getExtraInfo().getInt("id");
+        Treasure treasure = TreasureRepo.getInstance().getTreasure(id);
+        TreasureDetailActivity.open(getContext(),treasure);
+    }
+
 
     /** 视图的切换方法：根据各个控件的显示和隐藏来实现视图的切换
      * 普通的视图
