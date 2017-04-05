@@ -42,6 +42,7 @@ import com.feicuiedu.treasure_20170327.R;
 import com.feicuiedu.treasure_20170327.commons.ActivityUtils;
 import com.feicuiedu.treasure_20170327.treasure.Area;
 import com.feicuiedu.treasure_20170327.treasure.Treasure;
+import com.feicuiedu.treasure_20170327.treasure.TreasureRepo;
 
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,7 @@ public class MapFragment extends Fragment implements MapMvpView{
     private MapView mMapView;
     private LocationClient mLocationClient;
     private boolean isFirst = true;
-    private LatLng mCurrentLocation;
+    private static LatLng mCurrentLocation;
     private String mCurrentAddr;
     private LatLng mCurrentStatus;
     private MapPresenter mMapPresenter;
@@ -118,6 +119,9 @@ public class MapFragment extends Fragment implements MapMvpView{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // 清空缓存的数据
+        TreasureRepo.getInstance().clear();
 
         ButterKnife.bind(this, view);
 
@@ -338,7 +342,6 @@ public class MapFragment extends Fragment implements MapMvpView{
     // 添加覆盖物的方法
     private void addMarker(LatLng latlng, int treasureId) {
         // 根据宝藏的经纬度、id 添加覆盖物
-
         MarkerOptions options = new MarkerOptions()
                 .position(latlng)// 覆盖物添加的位置
                 .icon(dot)// 覆盖物的图标
@@ -351,6 +354,11 @@ public class MapFragment extends Fragment implements MapMvpView{
         options.extraInfo(bundle);
 
         mBaiduMap.addOverlay(options);
+    }
+
+    // 将定位的位置返回出去，供其它调用
+    public static LatLng getMyLocation(){
+        return mCurrentLocation;
     }
 
     // 卫星视图和普通视图的切换
@@ -412,6 +420,10 @@ public class MapFragment extends Fragment implements MapMvpView{
 
     @Override
     public void setTreasureData(List<Treasure> list) {
+
+        // 再次进行网络请求的时候，之前的覆盖物都清除一下
+        mBaiduMap.clear();// 清空地图上所有的覆盖物和InfoWindow
+
         for (Treasure treasure :
                 list) {
             // 拿到每一个宝藏数据、将宝藏信息以覆盖物的形式添加到地图上
