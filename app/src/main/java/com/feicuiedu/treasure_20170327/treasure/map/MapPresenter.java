@@ -20,6 +20,12 @@ import retrofit2.Response;
 // 获取宝藏数据的业务类
 public class MapPresenter {
 
+    private MapMvpView mMapMvpView;
+
+    public MapPresenter(MapMvpView mapMvpView) {
+        mMapMvpView = mapMvpView;
+    }
+
     // 获取宝藏数据
     public void getTreasure(Area area){
         Call<List<Treasure>> listCall = NetClient.getInstance().getTreasureApi().getTreasureInArea(area);
@@ -37,11 +43,11 @@ public class MapPresenter {
 
                 if (treasureList==null){
                     // 弹个吐司说明一下
+                    mMapMvpView.showMessage("未知的错误");
                     return;
                 }
                 // 拿到数据：给MapFragment设置上，在地图上展示
-                LogUtils.i("请求的数据："+treasureList.size());
-
+                mMapMvpView.setTreasureData(treasureList);
             }
         }
 
@@ -49,7 +55,7 @@ public class MapPresenter {
         @Override
         public void onFailure(Call<List<Treasure>> call, Throwable t) {
             // 弹个吐司
-            LogUtils.i("请求失败"+t.getMessage());
+            mMapMvpView.showMessage("请求失败："+t.getMessage());
         }
     };
 }

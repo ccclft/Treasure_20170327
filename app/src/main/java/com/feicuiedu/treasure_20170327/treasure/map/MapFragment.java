@@ -34,8 +34,11 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.feicuiedu.treasure_20170327.R;
+import com.feicuiedu.treasure_20170327.commons.ActivityUtils;
 import com.feicuiedu.treasure_20170327.treasure.Area;
+import com.feicuiedu.treasure_20170327.treasure.Treasure;
 
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -46,7 +49,7 @@ import butterknife.OnClick;
  * Created by gqq on 2017/3/31.
  */
 // 地图和宝藏的展示
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements MapMvpView{
 
     private static final int LOCATION_REQUEST_CODE = 100;
     @BindView(R.id.iv_located)
@@ -87,6 +90,7 @@ public class MapFragment extends Fragment {
     private String mCurrentAddr;
     private LatLng mCurrentStatus;
     private MapPresenter mMapPresenter;
+    private ActivityUtils mActivityUtils;
 
     @Nullable
     @Override
@@ -111,7 +115,9 @@ public class MapFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        mMapPresenter = new MapPresenter();
+        mActivityUtils = new ActivityUtils(this);
+
+        mMapPresenter = new MapPresenter(this);
         // 视图的处理工作
 
         // 初始化百度地图
@@ -278,6 +284,12 @@ public class MapFragment extends Fragment {
         mMapPresenter.getTreasure(area);
     }
 
+    // 添加覆盖物的方法
+    private void addMarker(LatLng latlng, int treasureId) {
+        // TODO 根据宝藏的经纬度、id 添加覆盖物
+
+    }
+
     // 卫星视图和普通视图的切换
     @OnClick(R.id.tv_satellite)
     public void switchMapType(){
@@ -326,6 +338,23 @@ public class MapFragment extends Fragment {
         MapStatusUpdate update = MapStatusUpdateFactory.newMapStatus(mapStatus);
         // 利用地图操作类更新地图的状态
         mBaiduMap.animateMapStatus(update);
+    }
+
+
+    // -------------------------视图的具体实现--------------------------
+    @Override
+    public void showMessage(String msg) {
+        mActivityUtils.showToast(msg);
+    }
+
+    @Override
+    public void setTreasureData(List<Treasure> list) {
+        for (Treasure treasure :
+                list) {
+            // 拿到每一个宝藏数据、将宝藏信息以覆盖物的形式添加到地图上
+            LatLng latlng = new LatLng(treasure.getLatitude(),treasure.getLongitude());
+            addMarker(latlng,treasure.getId());
+        }
     }
 
     // 处理权限的回调
