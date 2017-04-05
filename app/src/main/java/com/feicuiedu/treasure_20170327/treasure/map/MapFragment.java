@@ -90,14 +90,14 @@ public class MapFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container);
 
-        // 1. 检测权限有没有授权成功
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // 没有成功，需要向用户申请
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    LOCATION_REQUEST_CODE);
-        }
+//        // 1. 检测权限有没有授权成功
+//        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            // 没有成功，需要向用户申请
+//            ActivityCompat.requestPermissions(getActivity(),
+//                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+//                    LOCATION_REQUEST_CODE);
+//        }
 
         return view;
     }
@@ -264,20 +264,20 @@ public class MapFragment extends Fragment {
     }
 
     // 处理权限的回调
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch(requestCode){
-            case LOCATION_REQUEST_CODE:
-
-                // 用户授权成功了
-                if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                    // 定位了
-                    mLocationClient.requestLocation();
-                }else {
-                    // 显示个吐司、提示框
-                }
-                break;
-        }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        switch(requestCode){
+//            case LOCATION_REQUEST_CODE:
+//
+//                // 用户授权成功了
+//                if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
+//                    // 定位了
+//                    mLocationClient.requestLocation();
+//                }else {
+//                    // 显示个吐司、提示框
+//                }
+//                break;
+//        }
+//    }
 }
