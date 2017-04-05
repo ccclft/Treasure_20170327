@@ -2,6 +2,9 @@ package com.feicuiedu.treasure_20170327.net;
 
 import com.feicuiedu.treasure_20170327.user.User;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.FormBody;
@@ -29,7 +32,8 @@ public class NetClient {
 
     private NetClient() {
 
-        mGson = new Gson();
+        // 设置GSON的非严格模式setLenient()
+        mGson = new GsonBuilder().setLenient().create();
 
         // 日志拦截器
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -48,7 +52,7 @@ public class NetClient {
                 .baseUrl(BASE_URL)// 必须要加的BASEURL
                 .client(mOkHttpClient)// 添加OkHttpClient
                 // 添加转换器
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(mGson))
                 .build();
     }
 

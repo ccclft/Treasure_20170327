@@ -27,10 +27,15 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BaiduMapOptions;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.InfoWindow;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.feicuiedu.treasure_20170327.R;
@@ -91,20 +96,21 @@ public class MapFragment extends Fragment implements MapMvpView{
     private LatLng mCurrentStatus;
     private MapPresenter mMapPresenter;
     private ActivityUtils mActivityUtils;
+    private Marker mCurrentMarker;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container);
 
-//        // 1. 检测权限有没有授权成功
-//        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            // 没有成功，需要向用户申请
-//            ActivityCompat.requestPermissions(getActivity(),
-//                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-//                    LOCATION_REQUEST_CODE);
-//        }
+        // 1. 检测权限有没有授权成功
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // 没有成功，需要向用户申请
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    LOCATION_REQUEST_CODE);
+        }
 
         return view;
     }
@@ -225,7 +231,48 @@ public class MapFragment extends Fragment implements MapMvpView{
 
         // 设置地图状态的监听
         mBaiduMap.setOnMapStatusChangeListener(mStatusChangeListener);
+
+        // 设置地图上的覆盖物的点击监听
+        mBaiduMap.setOnMarkerClickListener(mMarkerClickListener);
     }
+
+    // 覆盖物的点击监听
+    private BaiduMap.OnMarkerClickListener mMarkerClickListener = new BaiduMap.OnMarkerClickListener() {
+
+        // 点击Marker会触发：marker当前点击的
+        @Override
+        public boolean onMarkerClick(Marker marker) {
+
+            // 当前点击的Marker先管理判断
+            if (mCurrentMarker!=null){
+                if (mCurrentMarker!=marker){
+                    mCurrentMarker.setVisible(true);// 点击了其他的，把之前的显示出来
+                }
+            }
+            mCurrentMarker = marker;
+            // 点击展示InfoWindow，当前的覆盖物不可见
+            mCurrentMarker.setVisible(false);
+
+            // 1. 创建InfoWindow
+            InfoWindow infoWindow = new InfoWindow(dot_expand, marker.getPosition(), 0, new InfoWindow.OnInfoWindowClickListener() {
+
+                // InfoWindow的点击监听
+                @Override
+                public void onInfoWindowClick() {
+                    if (mCurrentMarker!=null){
+                        mCurrentMarker.setVisible(true);
+                    }
+                    // 隐藏InfoWindow
+                    mBaiduMap.hideInfoWindow();
+                }
+            });
+
+            // 2. 地图上展示
+            mBaiduMap.showInfoWindow(infoWindow);
+
+            return false;
+        }
+    };
 
     // 地图状态的监听
     private BaiduMap.OnMapStatusChangeListener mStatusChangeListener = new BaiduMap.OnMapStatusChangeListener() {
@@ -284,10 +331,26 @@ public class MapFragment extends Fragment implements MapMvpView{
         mMapPresenter.getTreasure(area);
     }
 
+    // 覆盖物图标
+    private BitmapDescriptor dot = BitmapDescriptorFactory.fromResource(R.mipmap.treasure_dot);
+    private BitmapDescriptor dot_expand = BitmapDescriptorFactory.fromResource(R.mipmap.treasure_expanded);
+
     // 添加覆盖物的方法
     private void addMarker(LatLng latlng, int treasureId) {
-        // TODO 根据宝藏的经纬度、id 添加覆盖物
+        // 根据宝藏的经纬度、id 添加覆盖物
 
+        MarkerOptions options = new MarkerOptions()
+                .position(latlng)// 覆盖物添加的位置
+                .icon(dot)// 覆盖物的图标
+                .anchor(0.5f,0.5f)// 锚点位置：居中
+                ;
+
+        // 将宝藏的id信息也一并存到覆盖物里面
+        Bundle bundle = new Bundle();
+        bundle.putInt("id",treasureId);
+        options.extraInfo(bundle);
+
+        mBaiduMap.addOverlay(options);
     }
 
     // 卫星视图和普通视图的切换
@@ -358,20 +421,20 @@ public class MapFragment extends Fragment implements MapMvpView{
     }
 
     // 处理权限的回调
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        switch(requestCode){
-//            case LOCATION_REQUEST_CODE:
-//
-//                // 用户授权成功了
-//                if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
-//                    // 定位了
-//                    mLocationClient.requestLocation();
-//                }else {
-//                    // 显示个吐司、提示框
-//                }
-//                break;
-//        }
-//    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode){
+            case LOCATION_REQUEST_CODE:
+
+                // 用户授权成功了
+                if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                    // 定位了
+                    mLocationClient.requestLocation();
+                }else {
+                    // 显示个吐司、提示框
+                }
+                break;
+        }
+    }
 }
