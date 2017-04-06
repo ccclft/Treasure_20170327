@@ -20,10 +20,13 @@ import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.navi.BaiduMapNavigation;
+import com.baidu.mapapi.navi.NaviParaOption;
 import com.feicuiedu.treasure_20170327.R;
 import com.feicuiedu.treasure_20170327.commons.ActivityUtils;
 import com.feicuiedu.treasure_20170327.custom.TreasureView;
 import com.feicuiedu.treasure_20170327.treasure.Treasure;
+import com.feicuiedu.treasure_20170327.treasure.map.MapFragment;
 
 import java.util.List;
 
@@ -167,11 +170,77 @@ public class TreasureDetailActivity extends AppCompatActivity implements Treasur
         @Override
         public boolean onMenuItemClick(MenuItem item) {
 
-            // TODO: 2017/4/6 步行和骑行的点击事件
+            // 不管进行骑行还是步行，都需要起点和终点：坐标和地址
+            // 起点：我们定位的位置和地址
+            LatLng start = MapFragment.getMyLocation();
+            String startAddr = MapFragment.getLocationAddr();
+
+            // 终点：宝藏的位置和地址
+            LatLng end = new LatLng(mTreasure.getLatitude(),mTreasure.getLongitude());
+            String endAddr = mTreasure.getLocation();
+
+            // 步行和骑行的点击事件
+            switch (item.getItemId()){
+                case R.id.walking_navi:
+                    // 开始步行导航
+                    startWalkingNavi(start,startAddr,end,endAddr);
+                    break;
+                case R.id.biking_navi:
+                    // 开始骑行导航
+                    startBikingNavi(start,startAddr,end,endAddr);
+                    break;
+            }
 
             return false;
         }
     };
+
+    // 骑行导航的方法
+    private void startBikingNavi(LatLng startPoint,String startAddr,LatLng endPoint,String endAddr) {
+        // 起点和终点的设置
+        NaviParaOption option = new NaviParaOption()
+                .startName(startAddr)
+                .startPoint(startPoint)
+                .endName(endAddr)
+                .endPoint(endPoint);
+        // 打开骑行导航
+        boolean bikeNavi = BaiduMapNavigation.openBaiduMapBikeNavi(option, this);
+
+        // 未开启成功
+        if (!bikeNavi){
+            startWebNavi(startPoint, startAddr, endPoint, endAddr);
+        }
+    }
+
+    // 步行导航的方法
+    private void startWalkingNavi(LatLng startPoint,String startAddr,LatLng endPoint,String endAddr) {
+        // 起点和终点的设置
+        NaviParaOption option = new NaviParaOption()
+                .startName(startAddr)
+                .startPoint(startPoint)
+                .endName(endAddr)
+                .endPoint(endPoint);
+
+        // 开启步行导航
+        boolean walkNavi = BaiduMapNavigation.openBaiduMapWalkNavi(option, this);
+
+        // 未开启成功
+        if (!walkNavi){
+            // 可以到网页导航
+            startWebNavi(startPoint, startAddr, endPoint, endAddr);
+        }
+    }
+
+    // 打开网页进行导航
+    private void startWebNavi(LatLng startPoint,String startAddr,LatLng endPoint,String endAddr){
+        // 起点和终点的设置
+        NaviParaOption option = new NaviParaOption()
+                .startName(startAddr)
+                .startPoint(startPoint)
+                .endName(endAddr)
+                .endPoint(endPoint);
+        BaiduMapNavigation.openWebBaiduMapNavi(option,this);
+    }
 
     // -----------------------------详情的视图实现----------------------------
     @Override

@@ -101,7 +101,7 @@ public class MapFragment extends Fragment implements MapMvpView{
     private LocationClient mLocationClient;
     private boolean isFirst = true;
     private static LatLng mCurrentLocation;
-    private String mCurrentAddr;
+    private static String mCurrentAddr;
     private LatLng mCurrentStatus;
     private MapPresenter mMapPresenter;
     private ActivityUtils mActivityUtils;
@@ -371,6 +371,11 @@ public class MapFragment extends Fragment implements MapMvpView{
     // 将定位的位置返回出去，供其它调用
     public static LatLng getMyLocation(){
         return mCurrentLocation;
+    }
+
+    // 将定位的地址信息返回出去
+    public static String getLocationAddr(){
+        return mCurrentAddr;
     }
 
     // -----------------------------视图的点击事件------------------------------------
