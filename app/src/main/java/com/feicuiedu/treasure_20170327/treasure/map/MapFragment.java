@@ -532,4 +532,14 @@ public class MapFragment extends Fragment implements MapMvpView{
                 break;
         }
     }
+
+    // 对外提供一个方法，什么时候可以退出
+    public boolean clickBackPressed(){
+
+        if (mUIMode!=UI_MODE_NORMAL){
+            changeUIMode(UI_MODE_NORMAL);
+            return false;
+        }
+        return true;
+    }
 }

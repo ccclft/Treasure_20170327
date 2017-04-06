@@ -15,8 +15,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.feicuiedu.treasure_20170327.MainActivity;
 import com.feicuiedu.treasure_20170327.R;
+import com.feicuiedu.treasure_20170327.commons.ActivityUtils;
 import com.feicuiedu.treasure_20170327.treasure.list.TreasureListFragment;
+import com.feicuiedu.treasure_20170327.treasure.map.MapFragment;
 import com.feicuiedu.treasure_20170327.user.UserPrefs;
 import com.squareup.picasso.Picasso;
 
@@ -33,8 +36,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     NavigationView mNavigationView;
     private ImageView mIvIcon;
 
+    private MapFragment mMapFragment;
     private TreasureListFragment mListFragment;// 列表视图
     private FragmentManager mFragmentManager;
+
+    private ActivityUtils mActivityUtils;
 
 
     @Override
@@ -44,7 +50,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         ButterKnife.bind(this);
 
+        mActivityUtils = new ActivityUtils(this);
+
         mFragmentManager = getSupportFragmentManager();
+        mMapFragment = (MapFragment) mFragmentManager.findFragmentById(R.id.mapFragment);
 
         // toolbar
         setSupportActionBar(mToolbar);
@@ -96,10 +105,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_hide:// 埋藏宝藏的时候
-                Toast.makeText(this, "埋藏宝藏", Toast.LENGTH_SHORT).show();
+                mMapFragment.changeUIMode(2);// 切换到埋藏宝藏的视图
                 break;
             case R.id.menu_logout:// 退出的时候
-                Toast.makeText(this, "退出", Toast.LENGTH_SHORT).show();
+                // 清空用户信息数据
+                UserPrefs.getInstance().clearUser();
+                // 返回到Main页面
+                mActivityUtils.startActivity(MainActivity.class);
+                finish();
                 break;
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -166,5 +179,20 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 // 添加回退栈
                 .addToBackStack(null)
                 .commit();
+    }
+
+    // 处理返回键
+    @Override
+    public void onBackPressed() {
+
+        // 侧滑打开的，就先关闭
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        }else {
+            // 如果MapFragment里面的视图是普通视图的话，可以退出
+            if (mMapFragment.clickBackPressed()){
+                super.onBackPressed();
+            }
+        }
     }
 }
