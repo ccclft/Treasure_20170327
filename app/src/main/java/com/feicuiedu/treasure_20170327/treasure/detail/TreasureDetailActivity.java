@@ -1,7 +1,9 @@
 package com.feicuiedu.treasure_20170327.treasure.detail;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
@@ -22,6 +24,7 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.navi.BaiduMapNavigation;
 import com.baidu.mapapi.navi.NaviParaOption;
+import com.baidu.mapapi.utils.OpenClientUtil;
 import com.feicuiedu.treasure_20170327.R;
 import com.feicuiedu.treasure_20170327.commons.ActivityUtils;
 import com.feicuiedu.treasure_20170327.custom.TreasureView;
@@ -227,8 +230,30 @@ public class TreasureDetailActivity extends AppCompatActivity implements Treasur
         // 未开启成功
         if (!walkNavi){
             // 可以到网页导航
-            startWebNavi(startPoint, startAddr, endPoint, endAddr);
+//            startWebNavi(startPoint, startAddr, endPoint, endAddr);
+            showDialog();
         }
+    }
+
+    // 显示一个对话框提示：没有安装，是否去下载
+    private void showDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("提示")
+                .setMessage("您未安装百度地图客户端或版本过低，要不要安装？")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 打开最新版的客户端下载页面
+                        OpenClientUtil.getLatestBaiduMapApp(TreasureDetailActivity.this);
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create().show();
     }
 
     // 打开网页进行导航
