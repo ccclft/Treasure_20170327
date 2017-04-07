@@ -38,6 +38,11 @@ import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.feicuiedu.treasure_20170327.R;
 import com.feicuiedu.treasure_20170327.commons.ActivityUtils;
 import com.feicuiedu.treasure_20170327.custom.TreasureView;
@@ -95,7 +100,6 @@ public class MapFragment extends Fragment implements MapMvpView{
     @BindView(R.id.hide_treasure)
     RelativeLayout mHideTreasure;
 
-
     private BaiduMap mBaiduMap;
     private MapView mMapView;
     private LocationClient mLocationClient;
@@ -106,6 +110,8 @@ public class MapFragment extends Fragment implements MapMvpView{
     private MapPresenter mMapPresenter;
     private ActivityUtils mActivityUtils;
     private Marker mCurrentMarker;
+    private GeoCoder mGeoCoder;
+    private String mGeoCoderAddr;
 
     @Nullable
     @Override
@@ -143,7 +149,49 @@ public class MapFragment extends Fragment implements MapMvpView{
         // 初始化定位相关
         initLocation();
 
+        // 初始化地理编码相关
+        initGeoCoder();
+
     }
+
+    // 地理编码相关
+    private void initGeoCoder() {
+
+        // 第一步，创建地理编码检索实例；
+        mGeoCoder = GeoCoder.newInstance();
+
+        // 第二步，设置地理编码检索监听者；
+        mGeoCoder.setOnGetGeoCodeResultListener(mGeoCoderResultListener);
+
+        // 地图状态变化之后发起
+    }
+
+    // 地理编码的监听者
+    private OnGetGeoCoderResultListener mGeoCoderResultListener = new OnGetGeoCoderResultListener() {
+
+        // 获取地理编码结果:geoCodeResult拿到的结果
+        @Override
+        public void onGetGeoCodeResult(GeoCodeResult geoCodeResult) {
+
+        }
+
+        // 获取反向地理编码结果：reverseGeoCodeResult拿到的结果
+        @Override
+        public void onGetReverseGeoCodeResult(ReverseGeoCodeResult reverseGeoCodeResult) {
+            // 判断结果是否正确拿到
+            if (reverseGeoCodeResult==null||reverseGeoCodeResult.error!= SearchResult.ERRORNO.NO_ERROR){
+                // 没有拿到检索的结果
+                mGeoCoderAddr = "未知的地址";
+                mTvCurrentLocation.setText(mGeoCoderAddr);
+                return;
+            }
+            // 拿到地址信息
+            mGeoCoderAddr = reverseGeoCodeResult.getAddress();
+
+            // 将地址信息设置给TextView
+            mTvCurrentLocation.setText(mGeoCoderAddr);
+        }
+    };
 
     // 初始化定位相关
     private void initLocation() {
@@ -317,6 +365,9 @@ public class MapFragment extends Fragment implements MapMvpView{
 
                 // 根据当前的地图的状态来获取当前的区域内的宝藏数据
                 updateMapArea();
+
+                // TODO 发起反地理编码：经纬度-->地址
+
 
                 // 当前地图的位置
                 MapFragment.this.mCurrentStatus = target;
