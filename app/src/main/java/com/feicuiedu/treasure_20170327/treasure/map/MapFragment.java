@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +43,7 @@ import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.geocode.GeoCodeResult;
 import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.feicuiedu.treasure_20170327.R;
 import com.feicuiedu.treasure_20170327.commons.ActivityUtils;
@@ -50,6 +52,7 @@ import com.feicuiedu.treasure_20170327.treasure.Area;
 import com.feicuiedu.treasure_20170327.treasure.Treasure;
 import com.feicuiedu.treasure_20170327.treasure.TreasureRepo;
 import com.feicuiedu.treasure_20170327.treasure.detail.TreasureDetailActivity;
+import com.feicuiedu.treasure_20170327.treasure.hide.HideTreasureActivity;
 
 import java.util.List;
 import java.util.Map;
@@ -366,8 +369,16 @@ public class MapFragment extends Fragment implements MapMvpView{
                 // 根据当前的地图的状态来获取当前的区域内的宝藏数据
                 updateMapArea();
 
-                // TODO 发起反地理编码：经纬度-->地址
+                // 在埋藏宝藏的情况下
+                if (mUIMode==UI_MODE_HIDE){
 
+                    // 设置反地理编码的参数：位置(当前的经纬度)
+                    ReverseGeoCodeOption option = new ReverseGeoCodeOption();
+                    option.location(target);
+
+                    // 发起反地理编码：经纬度-->地址
+                    mGeoCoder.reverseGeoCode(option);
+                }
 
                 // 当前地图的位置
                 MapFragment.this.mCurrentStatus = target;
@@ -490,6 +501,19 @@ public class MapFragment extends Fragment implements MapMvpView{
         TreasureDetailActivity.open(getContext(),treasure);
     }
 
+    @OnClick(R.id.hide_treasure)
+    public void hideTreasure(){
+        // 拿到录入的标题
+        String title = mEtTreasureTitle.getText().toString();
+        // 判断
+        if (TextUtils.isEmpty(title)){
+            mActivityUtils.showToast("请输入宝藏标题");
+            return;
+        }
+        // 输入了标题：跳转到埋藏宝藏详细页面
+        LatLng latLng = mBaiduMap.getMapStatus().target;
+        HideTreasureActivity.open(getContext(),title,mGeoCoderAddr,latLng,0);
+    }
 
     /** 视图的切换方法：根据各个控件的显示和隐藏来实现视图的切换
      * 普通的视图
@@ -543,7 +567,6 @@ public class MapFragment extends Fragment implements MapMvpView{
                 break;
         }
     }
-
 
 
     // -------------------------视图的具体实现--------------------------
