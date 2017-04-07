@@ -21,6 +21,7 @@ import com.feicuiedu.treasure_20170327.commons.ActivityUtils;
 import com.feicuiedu.treasure_20170327.treasure.list.TreasureListFragment;
 import com.feicuiedu.treasure_20170327.treasure.map.MapFragment;
 import com.feicuiedu.treasure_20170327.user.UserPrefs;
+import com.feicuiedu.treasure_20170327.user.account.AccountActivity;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -57,7 +58,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         // toolbar
         setSupportActionBar(mToolbar);
-        if (getSupportActionBar()!=null){
+        if (getSupportActionBar() != null) {
             // 不显示默认的标题，而是显示布局中自己加的TextView
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
@@ -80,7 +81,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mIvIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(HomeActivity.this, "头像", Toast.LENGTH_SHORT).show();
+                // 跳转到个人信息页面
+                mActivityUtils.startActivity(AccountActivity.class);
             }
         });
     }
@@ -91,7 +93,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         // 更新头像信息
         String photo = UserPrefs.getInstance().getPhoto();
-        if (photo!=null){
+        if (photo != null) {
             // 加载头像：采用Picasso实现
             Picasso
                     .with(this)
@@ -103,7 +105,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     // 侧滑的Navigation的Item每一项被选择的时候会触发
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menu_hide:// 埋藏宝藏的时候
                 mMapFragment.changeUIMode(2);// 切换到埋藏宝藏的视图
                 break;
@@ -126,9 +128,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // item的图标的变化处理
         MenuItem item = menu.findItem(R.id.action_toggle);
         // 根据显示的视图不一样，设置不一样的图标
-        if (mListFragment!=null&&mListFragment.isAdded()){
+        if (mListFragment != null && mListFragment.isAdded()) {
             item.setIcon(R.drawable.ic_map);
-        }else {
+        } else {
             item.setIcon(R.drawable.ic_view_list);
         }
         return super.onPrepareOptionsMenu(menu);
@@ -138,14 +140,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // 菜单的填充
-        getMenuInflater().inflate(R.menu.menu_home,menu);
+        getMenuInflater().inflate(R.menu.menu_home, menu);
         return true;
     }
 
     // 某一个选项菜单被选择的时候(点击)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_toggle:
 
                 // 切换视图：地图的视图和列表的视图进行切换
@@ -162,7 +164,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     // 显示或隐藏列表视图
     private void showListFragment() {
 
-        if (mListFragment!=null&&mListFragment.isAdded()){
+        if (mListFragment != null && mListFragment.isAdded()) {
 
             // 将ListFragment弹出回退栈
             mFragmentManager.popBackStack();
@@ -175,7 +177,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         // 在布局中展示(FrameLayout作为占位)
         mFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container,mListFragment)
+                .replace(R.id.fragment_container, mListFragment)
                 // 添加回退栈
                 .addToBackStack(null)
                 .commit();
@@ -186,11 +188,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     public void onBackPressed() {
 
         // 侧滑打开的，就先关闭
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
-        }else {
+        } else {
             // 如果MapFragment里面的视图是普通视图的话，可以退出
-            if (mMapFragment.clickBackPressed()){
+            if (mMapFragment.clickBackPressed()) {
                 super.onBackPressed();
             }
         }
