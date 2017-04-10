@@ -363,5 +363,17 @@ Home页面的搭建：侧滑和侧滑菜单
 20170410：
 头像上传
 1. 自定义的PopupWindow
+2. 相册和相机的跳转以及头像剪切
+    PhotoCropper
+    添加依赖：compile 'org.hybridsquad.android.photocropper:library:2.1.0'
+    依赖包是一个aar的包，会发生清单文件合并的错误：按照提示修改：
+        清单文件中添加：tools:replace="android:icon"
 
+    注意：使用前清除之前剪切图片的缓存
+    CropHelper.clearCachedCropFile(mCropParams.uri);
+
+    使用：
+    1. onActivityResult处理结果
+    2. 创建CropHandler，并实现里面的方法
+    3. 分别进行跳转到相册和相机来处理
 
