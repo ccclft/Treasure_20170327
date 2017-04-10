@@ -7,14 +7,20 @@ import com.feicuiedu.treasure_20170327.treasure.detail.TreasureDetailResult;
 import com.feicuiedu.treasure_20170327.treasure.hide.HideTreasure;
 import com.feicuiedu.treasure_20170327.treasure.hide.HideTreasureResult;
 import com.feicuiedu.treasure_20170327.user.User;
+import com.feicuiedu.treasure_20170327.user.account.Update;
+import com.feicuiedu.treasure_20170327.user.account.UpdateResult;
+import com.feicuiedu.treasure_20170327.user.account.UploadResult;
 import com.feicuiedu.treasure_20170327.user.login.LoginResult;
 import com.feicuiedu.treasure_20170327.user.register.RegisterResult;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 
 /**
  * Created by gqq on 2017/3/30.
@@ -42,4 +48,12 @@ public interface TreasureApi {
     @POST("/Handler/TreasureHandler.ashx?action=hide")
     Call<HideTreasureResult> hideTreasure(@Body HideTreasure hideTreasure);
 
+    // 头像的上传
+    @Multipart
+    @POST("/Handler/UserLoadPicHandler1.ashx")
+    Call<UploadResult> upload(@Part MultipartBody.Part part);
+
+    // 用户头像的更新
+    @POST("/Handler/UserHandler.ashx?action=update")
+    Call<UpdateResult> update(@Body Update update);
 }

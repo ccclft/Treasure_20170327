@@ -1,6 +1,7 @@
 package com.feicuiedu.treasure_20170327.user.account;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -27,7 +28,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 // 个人信息页面
-public class AccountActivity extends AppCompatActivity {
+public class AccountActivity extends AppCompatActivity implements AccountView{
 
     @BindView(R.id.account_toolbar)
     Toolbar mToolbar;
@@ -36,6 +37,7 @@ public class AccountActivity extends AppCompatActivity {
 
     private ActivityUtils mActivityUtils;
     private IconSelectWindow mSelectWindow;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,8 +107,9 @@ public class AccountActivity extends AppCompatActivity {
         public void onPhotoCropped(Uri uri) {
             // 拿到剪切之后的图片
             File file = new File(uri.getPath());
-            // TODO 进行网络请求将图片上传
-            mActivityUtils.showToast(uri.getPath());
+            //进行网络请求将图片上传
+            new AccountPresenter(AccountActivity.this).uploadPhoto(file);
+
         }
 
         // 取消
@@ -160,5 +163,34 @@ public class AccountActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    // -----------------------头像的视图方法-----------------------------
+    @Override
+    public void showProgress() {
+        mProgressDialog = ProgressDialog.show(this, "头像上传", "正在上传中~");
+    }
+
+    @Override
+    public void hideProgress() {
+        if (mProgressDialog!=null){
+            mProgressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void showMessage(String msg) {
+        mActivityUtils.showToast(msg);
+    }
+
+    @Override
+    public void updatePhoto(String photoUrl) {
+        if (photoUrl!=null){
+            Picasso.with(this)
+                    .load(photoUrl)
+                    .error(R.mipmap.user_icon)// 加载错误显示的视图
+                    .placeholder(R.mipmap.user_icon)// 占位视图
+                    .into(mIVIcon);
+        }
     }
 }
